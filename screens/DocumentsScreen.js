@@ -1,172 +1,282 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  ScrollView,
-  Text,
-  View,
-  Pressable,
   Alert,
   Linking,
-  Share,
   Platform,
+  Pressable,
+  ScrollView,
+  Share,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
-import * as Sharing from "expo-sharing";
 import * as Clipboard from "expo-clipboard";
 
-import styles from "../styles/DocumentsScreenStyles";
 import { useDocuments } from "../context/DocumentsContext";
+import styles from "../styles/DocumentsScreenStyles";
 
-function DocumentButton({ label, primary = false, onPress }) {
-  const [hovered, setHovered] = useState(false);
+const formatFileSize = (size) => {
+  const fileSize = Number(size || 0);
+
+  if (!fileSize) {
+    return "Unknown size";
+  }
+
+  if (fileSize < 1024) {
+    return `${fileSize} B`;
+  }
+
+  if (fileSize < 1024 * 1024) {
+    return `${(fileSize / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(fileSize / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+function DocumentCard({
+  document,
+  isWorking,
+  onCopyLink,
+  onDelete,
+  onOpen,
+  onRename,
+  onShare,
+}) {
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [draftName, setDraftName] = useState(document.name);
+
+  useEffect(() => {
+    setDraftName(document.name);
+  }, [document.name]);
+
+  const handleSaveName = async () => {
+    const wasRenamed = await onRename(document, draftName);
+
+    if (wasRenamed) {
+      setIsRenaming(false);
+    }
+  };
+
+  const cancelRename = () => {
+    setDraftName(document.name);
+    setIsRenaming(false);
+  };
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      onHoverIn={() => setHovered(true)}
-      onHoverOut={() => setHovered(false)}
-      android_ripple={{
-        color: primary
-          ? "rgba(255, 255, 255, 0.25)"
-          : "rgba(38, 50, 56, 0.15)",
-      }}
-      style={({ pressed }) => [
-        primary ? styles.linkButton : styles.secondaryButton,
-        {
-          minHeight: 58,
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          backgroundColor: pressed
-            ? primary
-              ? "#314A42"
-              : "#CBD5D9"
-            : hovered
-              ? primary
-                ? "#3F5A51"
-                : "#D8E1E4"
-              : primary
-                ? "#4F6B62"
-                : "#E7ECEE",
-          opacity: pressed ? 0.9 : 1,
-          transform: [{ scale: pressed ? 0.98 : 1 }],
-        },
-      ]}
-    >
-      <Text
+    <View style={styles.documentCard}>
+      <View style={styles.documentHeader}>
+        <View style={styles.documentTextColumn}>
+          {isRenaming ? (
+            <>
+              <Text style={styles.renameLabel}>
+                Document name
+              </Text>
+
+              <TextInput
+                autoCorrect={false}
+                editable={!isWorking}
+                onChangeText={setDraftName}
+                placeholder="Document name"
+                placeholderTextColor="#90A4AE"
+                style={styles.renameInput}
+                value={draftName}
+              />
+
+              <View style={styles.renameActions}>
+                <Pressable
+                  disabled={isWorking}
+                  onPress={cancelRename}
+                  style={styles.cancelRenameButton}
+                >
+                  <Text style={styles.cancelRenameText}>
+                    Cancel
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  disabled={isWorking}
+                  onPress={handleSaveName}
+                  style={[
+                    styles.saveRenameButton,
+                    isWorking && styles.buttonDisabled,
+                  ]}
+                >
+                  <Text style={styles.saveRenameText}>
+                    {isWorking ? "Saving..." : "Save Name"}
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text
+                numberOfLines={2}
+                style={styles.documentName}
+              >
+                {document.name}
+              </Text>
+
+              <Pressable
+                disabled={isWorking}
+                onPress={() => setIsRenaming(true)}
+                style={styles.renameButton}
+              >
+                <Text style={styles.renameButtonText}>
+                  Rename
+                </Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+
+        <Pressable
+          accessibilityLabel={`Delete ${document.name}`}
+          disabled={isWorking}
+          onPress={() => onDelete(document)}
+          style={({ pressed }) => [
+            styles.deleteButton,
+            pressed && styles.deleteButtonPressed,
+            isWorking && styles.buttonDisabled,
+          ]}
+        >
+          <Text style={styles.deleteButtonText}>
+            ×
+          </Text>
+        </Pressable>
+      </View>
+
+      <Text style={styles.documentMeta}>
+        {formatFileSize(document.size)} • Saved{" "}
+        {document.savedAt}
+      </Text>
+
+      <Pressable
+        disabled={isWorking}
+        onPress={() => onOpen(document)}
         style={[
-          primary ? styles.linkButtonText : styles.secondaryButtonText,
-          {
-            color: primary ? "#FFFFFF" : "#31464D",
-            fontSize: 17,
-            fontWeight: "800",
-            textAlign: "center",
-          },
+          styles.openButton,
+          isWorking && styles.buttonDisabled,
         ]}
       >
-        {label}
-      </Text>
-    </Pressable>
+        <Text style={styles.openButtonText}>
+          {isWorking ? "Working..." : "Open Document"}
+        </Text>
+      </Pressable>
+
+      <View style={styles.actionRow}>
+        <Pressable
+          disabled={isWorking}
+          onPress={() => onShare(document)}
+          style={[
+            styles.secondaryButtonLeft,
+            isWorking && styles.buttonDisabled,
+          ]}
+        >
+          <Text style={styles.secondaryButtonText}>
+            Share
+          </Text>
+        </Pressable>
+
+        <Pressable
+          disabled={isWorking}
+          onPress={() => onCopyLink(document)}
+          style={[
+            styles.secondaryButtonRight,
+            isWorking && styles.buttonDisabled,
+          ]}
+        >
+          <Text style={styles.secondaryButtonText}>
+            Copy Link
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
 export default function DocumentsScreen({ route }) {
   const { categoryId } = route.params;
 
-  const { getCategoryById, savedWithoutCategory } = useDocuments();
+  const {
+    createSignedDocumentUrl,
+    deleteDocument,
+    getCategoryById,
+    renameDocument,
+    savedWithoutCategory,
+  } = useDocuments();
+
+  const [activeDocumentId, setActiveDocumentId] =
+    useState(null);
 
   const category = getCategoryById(categoryId);
 
-  const formatFileSize = (size) => {
-    if (!size) {
-      return "Unknown size";
+  const runDocumentAction = async (
+    document,
+    action,
+    errorTitle,
+    fallbackMessage
+  ) => {
+    setActiveDocumentId(document.id);
+
+    try {
+      await action();
+      return true;
+    } catch (error) {
+      console.error(`${errorTitle}:`, error);
+
+      Alert.alert(
+        errorTitle,
+        error.message || fallbackMessage
+      );
+
+      return false;
+    } finally {
+      setActiveDocumentId(null);
     }
-
-    if (size < 1024) {
-      return `${size} B`;
-    }
-
-    if (size < 1024 * 1024) {
-      return `${(size / 1024).toFixed(1)} KB`;
-    }
-
-    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
-  const getCloudUrl = (document) => {
-    const url = document.shareUrl || document.cloudUrl || "";
-
-    return /^https?:\/\//i.test(url) ? url : "";
-  };
-
-  const getBrowserLocalUrl = (document) => {
-    const url = document.url || "";
-
-    return url.startsWith("blob:") ? url : "";
-  };
-
-  const getNativeFileUri = (document) => {
-    const uri = document.localUri || document.uri || "";
-
-    return uri.startsWith("file:") ? uri : "";
-  };
-
-  const getExternalUri = (document) => {
-    const uri = document.shareUri || "";
-
-    return uri.startsWith("content:") || uri.startsWith("file:")
-      ? uri
-      : "";
   };
 
   const openDocument = async (document) => {
-    const cloudUrl = getCloudUrl(document);
+    const browserTab =
+      Platform.OS === "web" &&
+      typeof window !== "undefined"
+        ? window.open("", "_blank")
+        : null;
 
-    if (Platform.OS === "web") {
-      const browserUrl = getBrowserLocalUrl(document);
-      const target = browserUrl || cloudUrl;
+    const wasOpened = await runDocumentAction(
+      document,
+      async () => {
+        const signedUrl =
+          await createSignedDocumentUrl(document);
 
-      if (!target) {
-        Alert.alert(
-          "Document Unavailable",
-          "This document has no usable file location."
-        );
-        return;
-      }
+        if (Platform.OS === "web") {
+          if (browserTab) {
+            browserTab.location.href = signedUrl;
+          } else {
+            window.open(signedUrl, "_blank");
+          }
 
-      window.open(target, "_blank");
-      return;
-    }
+          return;
+        }
 
-    const externalUri = getExternalUri(document);
-    const target = externalUri || cloudUrl;
+        await Linking.openURL(signedUrl);
+      },
+      "Open Failed",
+      "The secure document link could not be created."
+    );
 
-    if (!target) {
-      Alert.alert(
-        "Re-upload Required",
-        "This document was saved before secure file access was added. Delete it and upload it again."
-      );
-      return;
-    }
-
-    try {
-      await Linking.openURL(target);
-    } catch (error) {
-      console.error("Open document error:", error);
-
-      Alert.alert(
-        "Open Failed",
-        "Your device could not find an app that can open this file."
-      );
+    if (!wasOpened && browserTab) {
+      browserTab.close();
     }
   };
 
   const shareDocument = async (document) => {
-    try {
-      const cloudUrl = getCloudUrl(document);
+    await runDocumentAction(
+      document,
+      async () => {
+        const signedUrl =
+          await createSignedDocumentUrl(document);
 
-      // Public HTTPS link: works in email, WhatsApp, texts, etc.
-      if (cloudUrl) {
         if (Platform.OS === "web") {
           if (
             typeof navigator !== "undefined" &&
@@ -175,17 +285,17 @@ export default function DocumentsScreen({ route }) {
             await navigator.share({
               title: document.name,
               text: `Open ${document.name}`,
-              url: cloudUrl,
+              url: signedUrl,
             });
 
             return;
           }
 
-          await Clipboard.setStringAsync(cloudUrl);
+          await Clipboard.setStringAsync(signedUrl);
 
           Alert.alert(
             "Link Copied",
-            "Browser sharing is unavailable, so the document link was copied."
+            "Browser sharing is unavailable, so the secure link was copied."
           );
 
           return;
@@ -193,97 +303,79 @@ export default function DocumentsScreen({ route }) {
 
         await Share.share({
           title: document.name,
-          message: `Open ${document.name}\n${cloudUrl}`,
+          message: `Open ${document.name}\n${signedUrl}`,
         });
-
-        return;
-      }
-
-      if (Platform.OS === "web") {
-        Alert.alert(
-          "No Shareable Link Yet",
-          "This file exists only in this browser. Upload it to cloud storage before sharing it as a link."
-        );
-        return;
-      }
-
-      const nativeFileUri = getNativeFileUri(document);
-      const externalUri = getExternalUri(document);
-
-      if (!nativeFileUri) {
-        Alert.alert(
-          "Re-upload Required",
-          "This file was saved before safe Android sharing was added. Delete it and upload it again."
-        );
-        return;
-      }
-
-      const isAvailable = await Sharing.isAvailableAsync();
-
-      if (!isAvailable) {
-        Alert.alert(
-          "Sharing Unavailable",
-          "This device does not support the native share menu."
-        );
-        return;
-      }
-
-      try {
-        await Sharing.shareAsync(nativeFileUri, {
-          mimeType: document.type || "application/octet-stream",
-          dialogTitle: `Share ${document.name}`,
-        });
-
-        return;
-      } catch (firstError) {
-        // Android fallback using File.contentUri.
-        if (externalUri && externalUri !== nativeFileUri) {
-          await Sharing.shareAsync(externalUri, {
-            mimeType: document.type || "application/octet-stream",
-            dialogTitle: `Share ${document.name}`,
-          });
-
-          return;
-        }
-
-        throw firstError;
-      }
-    } catch (error) {
-      console.error("Share error:", error);
-
-      Alert.alert(
-        "Share Failed",
-        "The file could not be shared. Delete it, upload it again, and try once more."
-      );
-    }
+      },
+      "Share Failed",
+      "The secure document link could not be created."
+    );
   };
 
   const copyDocumentLink = async (document) => {
-    const cloudUrl = getCloudUrl(document);
+    await runDocumentAction(
+      document,
+      async () => {
+        const signedUrl =
+          await createSignedDocumentUrl(document);
 
-    if (!cloudUrl) {
-      Alert.alert(
-        "No Shareable Link Yet",
-        "This document is saved locally. A link that works on another phone requires cloud storage."
-      );
-      return;
-    }
+        await Clipboard.setStringAsync(signedUrl);
 
-    try {
-      await Clipboard.setStringAsync(cloudUrl);
+        Alert.alert(
+          "Copied",
+          "Secure document link copied. It expires after one hour."
+        );
+      },
+      "Copy Failed",
+      "The secure document link could not be created."
+    );
+  };
 
-      Alert.alert("Copied", "Shareable document link copied.");
-    } catch (error) {
-      console.error("Copy link error:", error);
+  const renameSavedDocument = async (
+    document,
+    newName
+  ) => {
+    return runDocumentAction(
+      document,
+      async () => {
+        await renameDocument(document, newName);
+      },
+      "Rename Failed",
+      "The document name could not be updated."
+    );
+  };
 
-      Alert.alert("Copy Failed", "The link could not be copied.");
-    }
+  const askToDeleteDocument = (document) => {
+    Alert.alert(
+      "Delete Document?",
+      `"${document.name}" will be permanently deleted from this category and cloud storage.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () =>
+            runDocumentAction(
+              document,
+              async () => {
+                await deleteDocument(document);
+              },
+              "Delete Failed",
+              "The document could not be deleted."
+            ),
+        },
+      ]
+    );
   };
 
   if (!category) {
     return (
-      <View style={styles.screen}>
-        <Text style={styles.errorText}>Category not found.</Text>
+      <View style={styles.centeredScreen}>
+        <Text style={styles.errorText}>
+          Category not found.
+        </Text>
       </View>
     );
   }
@@ -295,58 +387,56 @@ export default function DocumentsScreen({ route }) {
           <View
             style={[
               styles.iconCircle,
-              { backgroundColor: category.color },
+              {
+                backgroundColor: category.color,
+              },
             ]}
           >
-            <Text style={styles.iconText}>{category.icon}</Text>
+            <Text style={styles.iconText}>
+              {category.icon}
+            </Text>
           </View>
 
           <View style={styles.headerTextBox}>
-            <Text style={styles.title}>{category.title}</Text>
+            <Text style={styles.title}>
+              {category.title}
+            </Text>
 
             <Text style={styles.subtitle}>
               {category.documents.length} document
-              {category.documents.length === 1 ? "" : "s"} saved
+              {category.documents.length === 1
+                ? ""
+                : "s"}{" "}
+              saved
             </Text>
           </View>
         </View>
 
         {category.documents.length === 0 ? (
           <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>No documents yet</Text>
+            <Text style={styles.emptyTitle}>
+              No documents yet
+            </Text>
 
             <Text style={styles.emptyText}>
-              Go back to Home, upload documents, and assign them to this
-              category.
+              Go back to Home, upload documents, and
+              assign them to this category.
             </Text>
           </View>
         ) : (
           category.documents.map((document) => (
-            <View key={document.id} style={styles.documentCard}>
-              <Text style={styles.documentName}>{document.name}</Text>
-
-              <Text style={styles.documentMeta}>
-                {formatFileSize(document.size)} • Saved {document.savedAt}
-              </Text>
-
-              <DocumentButton
-                primary
-                label="Open Document"
-                onPress={() => openDocument(document)}
-              />
-
-              <View style={styles.actionRow}>
-                <DocumentButton
-                  label="Share"
-                  onPress={() => shareDocument(document)}
-                />
-
-                <DocumentButton
-                  label="Copy Link"
-                  onPress={() => copyDocumentLink(document)}
-                />
-              </View>
-            </View>
+            <DocumentCard
+              document={document}
+              isWorking={
+                activeDocumentId === document.id
+              }
+              key={document.id}
+              onCopyLink={copyDocumentLink}
+              onDelete={askToDeleteDocument}
+              onOpen={openDocument}
+              onRename={renameSavedDocument}
+              onShare={shareDocument}
+            />
           ))
         )}
 
@@ -357,7 +447,8 @@ export default function DocumentsScreen({ route }) {
             </Text>
 
             <Text style={styles.noteText}>
-              Some documents were kept after deleting a category.
+              Some documents were kept after deleting a
+              category.
             </Text>
           </View>
         )}

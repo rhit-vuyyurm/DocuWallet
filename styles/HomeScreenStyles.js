@@ -1,9 +1,91 @@
-import { StyleSheet, Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
+
+const PAGE_PADDING = 24;
+const GRID_GAP = 16;
+
+const cardShadow =
+  Platform.select({
+    ios: {
+      shadowColor: "#000000",
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
+      shadowOffset: {
+        width: 0,
+        height: 6,
+      },
+    },
+    android: {
+      elevation: 3,
+    },
+    web: {
+      boxShadow:
+        "0px 8px 20px rgba(0, 0, 0, 0.08)",
+    },
+  }) || {};
+
+const subtleShadow =
+  Platform.select({
+    ios: {
+      shadowColor: "#000000",
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      shadowOffset: {
+        width: 0,
+        height: 5,
+      },
+    },
+    android: {
+      elevation: 2,
+    },
+    web: {
+      boxShadow:
+        "0px 6px 16px rgba(0, 0, 0, 0.06)",
+    },
+  }) || {};
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#263238",
+  },
+
+  statusScreen: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#263238",
+    padding: 24,
+  },
+
+  statusTitle: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "800",
+    marginTop: 16,
+    textAlign: "center",
+  },
+
+  statusMessage: {
+    color: "#CFD8DC",
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 12,
+    textAlign: "center",
+  },
+
+  retryButton: {
+    alignItems: "center",
+    backgroundColor: "#495E57",
+    borderRadius: 14,
+    marginTop: 22,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+  },
+
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "800",
   },
 
   container: {
@@ -14,55 +96,45 @@ const styles = StyleSheet.create({
 
   header: {
     backgroundColor: "#263238",
-    paddingHorizontal: 24,
-    paddingTop: 48,
-    paddingBottom: 28,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
+    paddingBottom: 28,
+    paddingHorizontal: PAGE_PADDING,
+    paddingTop: 48,
   },
 
   headerTopRow: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
   },
 
   appName: {
+    color: "#FFFFFF",
     fontSize: 34,
     fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: 0.3,
   },
 
   headerSubtitle: {
-    fontSize: 15,
     color: "#CFD8DC",
+    fontSize: 15,
     marginTop: 6,
   },
 
-  logoCircle: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: "#F4CE14",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  logoText: {
-    fontSize: 26,
-    fontWeight: "900",
-    color: "#263238",
+  logoImage: {
+    borderRadius: 29,
+    height: 58,
+    width: 58,
   },
 
   statsRow: {
-    marginTop: 26,
+    alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.12)",
     borderRadius: 22,
-    paddingVertical: 18,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-around",
+    marginTop: 26,
+    paddingVertical: 18,
   },
 
   statBox: {
@@ -71,73 +143,56 @@ const styles = StyleSheet.create({
   },
 
   statNumber: {
+    color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "800",
-    color: "#FFFFFF",
   },
 
   statLabel: {
-    fontSize: 12,
     color: "#CFD8DC",
+    fontSize: 12,
     marginTop: 4,
   },
 
   statDivider: {
-    width: 1,
-    height: 34,
     backgroundColor: "rgba(255, 255, 255, 0.22)",
+    height: 34,
+    width: 1,
   },
 
   uploadPanel: {
-    marginHorizontal: 24,
-    marginTop: 22,
     backgroundColor: "#FFFFFF",
     borderRadius: 24,
+    marginBottom: 16,
+    marginHorizontal: PAGE_PADDING,
+    marginTop: 22,
     padding: 20,
-    marginBottom: 16,
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 6 },
-      },
-      android: {
-        elevation: 3,
-      },
-      web: {
-        boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.08)",
-      },
-    }),
-  },
-
-  uploadPanelHeader: {
-    marginBottom: 16,
+    ...cardShadow,
   },
 
   uploadPanelTitle: {
+    color: "#263238",
     fontSize: 22,
     fontWeight: "800",
-    color: "#263238",
   },
 
   uploadPanelSubtitle: {
-    fontSize: 14,
     color: "#78909C",
-    marginTop: 5,
+    fontSize: 14,
     lineHeight: 20,
+    marginTop: 5,
   },
 
   dropZone: {
-    borderWidth: 2,
-    borderColor: "#B0BEC5",
-    borderStyle: "dashed",
-    borderRadius: 20,
-    paddingVertical: 34,
-    paddingHorizontal: 20,
     alignItems: "center",
     backgroundColor: "#F8FAFB",
+    borderColor: "#B0BEC5",
+    borderRadius: 20,
+    borderStyle: "dashed",
+    borderWidth: 2,
+    marginTop: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
   },
 
   dropZoneIcon: {
@@ -146,24 +201,25 @@ const styles = StyleSheet.create({
   },
 
   dropZoneTitle: {
+    color: "#263238",
     fontSize: 18,
     fontWeight: "800",
-    color: "#263238",
   },
 
   dropZoneText: {
-    fontSize: 13,
     color: "#78909C",
-    textAlign: "center",
-    marginTop: 6,
+    fontSize: 13,
     marginBottom: 18,
+    marginTop: 6,
+    textAlign: "center",
   },
 
   uploadButton: {
+    alignItems: "center",
     backgroundColor: "#495E57",
-    paddingVertical: 14,
-    paddingHorizontal: 22,
     borderRadius: 14,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
   },
 
   uploadButtonText: {
@@ -172,62 +228,90 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
+  takePhotoButton: {
+    alignItems: "center",
+    backgroundColor: "#E7ECEE",
+    borderRadius: 14,
+    marginTop: 12,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+  },
+
+  takePhotoButtonText: {
+    color: "#31464D",
+    fontSize: 15,
+    fontWeight: "800",
+  },
+
   pendingFilesBox: {
-    marginTop: 18,
     backgroundColor: "#F8FAFB",
     borderRadius: 18,
+    marginTop: 18,
     padding: 14,
   },
 
   pendingFilesHeader: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 10,
   },
 
   pendingFilesTitle: {
+    color: "#263238",
     fontSize: 16,
     fontWeight: "800",
-    color: "#263238",
   },
 
   clearFilesText: {
+    color: "#C62828",
     fontSize: 13,
     fontWeight: "800",
-    color: "#C62828",
   },
 
   fileRow: {
+    alignItems: "center",
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: 8,
+    padding: 12,
   },
 
-  fileName: {
+  fileInfo: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#263238",
     marginRight: 12,
   },
 
+  fileLabel: {
+    color: "#607D8B",
+    fontSize: 11,
+    fontWeight: "800",
+    marginBottom: 4,
+  },
+
+  fileNameInput: {
+    borderBottomColor: "#CFD8DC",
+    borderBottomWidth: 1,
+    color: "#263238",
+    fontSize: 14,
+    fontWeight: "700",
+    paddingBottom: 5,
+    paddingTop: 2,
+  },
+
   fileMeta: {
-    fontSize: 12,
     color: "#78909C",
+    fontSize: 12,
     fontWeight: "700",
   },
 
   assignTitle: {
+    color: "#263238",
     fontSize: 15,
     fontWeight: "800",
-    color: "#263238",
-    marginTop: 12,
     marginBottom: 10,
+    marginTop: 12,
   },
 
   categoryChipWrap: {
@@ -237,13 +321,17 @@ const styles = StyleSheet.create({
 
   categoryChip: {
     backgroundColor: "#FFFFFF",
-    borderWidth: 1,
     borderColor: "#CFD8DC",
     borderRadius: 999,
-    paddingVertical: 9,
-    paddingHorizontal: 12,
-    marginRight: 8,
+    borderWidth: 1,
     marginBottom: 8,
+    marginRight: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+  },
+
+  categoryChipPressed: {
+    opacity: 0.82,
   },
 
   selectedCategoryChip: {
@@ -252,21 +340,93 @@ const styles = StyleSheet.create({
   },
 
   categoryChipText: {
+    color: "#455A64",
     fontSize: 13,
     fontWeight: "800",
-    color: "#455A64",
   },
 
   selectedCategoryChipText: {
     color: "#FFFFFF",
   },
 
+  addUploadCategoryButton: {
+    alignItems: "center",
+    marginTop: 4,
+    paddingVertical: 10,
+  },
+
+  addUploadCategoryButtonText: {
+    color: "#1565C0",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  categoryForm: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#ECEFF1",
+    borderRadius: 16,
+    borderWidth: 1,
+    marginTop: 12,
+    padding: 14,
+  },
+
+  categoryFormTitle: {
+    color: "#263238",
+    fontSize: 15,
+    fontWeight: "800",
+    marginBottom: 10,
+  },
+
+  categoryFormInput: {
+    borderColor: "#CFD8DC",
+    borderRadius: 12,
+    borderWidth: 1,
+    color: "#263238",
+    fontSize: 14,
+    padding: 12,
+  },
+
+  categoryFormActions: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+
+  categoryFormCancelButton: {
+    alignItems: "center",
+    backgroundColor: "#E7ECEE",
+    borderRadius: 12,
+    flex: 1,
+    marginRight: 5,
+    paddingVertical: 12,
+  },
+
+  categoryFormCancelText: {
+    color: "#31464D",
+    fontSize: 13,
+    fontWeight: "800",
+  },
+
+  categoryFormSaveButton: {
+    alignItems: "center",
+    backgroundColor: "#495E57",
+    borderRadius: 12,
+    flex: 1,
+    marginLeft: 5,
+    paddingVertical: 12,
+  },
+
+  categoryFormSaveText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "800",
+  },
+
   saveDocumentsButton: {
+    alignItems: "center",
     backgroundColor: "#495E57",
     borderRadius: 16,
+    marginTop: 12,
     paddingVertical: 15,
-    alignItems: "center",
-    marginTop: 10,
   },
 
   saveDocumentsButtonText: {
@@ -275,111 +435,91 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
+  buttonDisabled: {
+    opacity: 0.55,
+  },
+
   quickActionCard: {
-    marginHorizontal: 24,
     backgroundColor: "#FFFFFF",
     borderRadius: 22,
-    padding: 20,
     marginBottom: 10,
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 6 },
-      },
-      android: {
-        elevation: 3,
-      },
-      web: {
-        boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.08)",
-      },
-    }),
+    marginHorizontal: PAGE_PADDING,
+    padding: 20,
+    ...cardShadow,
   },
 
   quickActionTitle: {
+    color: "#263238",
     fontSize: 18,
     fontWeight: "800",
-    color: "#263238",
   },
 
   quickActionText: {
-    fontSize: 14,
     color: "#607D8B",
-    marginTop: 6,
+    fontSize: 14,
     lineHeight: 20,
+    marginTop: 6,
   },
 
   sectionHeader: {
-    marginHorizontal: 24,
-    marginTop: 18,
-    marginBottom: 14,
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: 14,
+    marginHorizontal: PAGE_PADDING,
+    marginTop: 18,
   },
 
   sectionTitle: {
+    color: "#263238",
     fontSize: 22,
     fontWeight: "800",
-    color: "#263238",
   },
 
   sectionHint: {
-    fontSize: 13,
     color: "#78909C",
+    fontSize: 13,
     fontWeight: "600",
   },
 
   categoryGrid: {
-    paddingHorizontal: 24,
+    alignItems: "flex-start",
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: "flex-start",
+    paddingHorizontal: PAGE_PADDING,
   },
 
   categoryCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 22,
-    padding: 16,
-    marginBottom: 16,
-    minHeight: 190,
     justifyContent: "space-between",
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOpacity: 0.07,
-        shadowRadius: 10,
-        shadowOffset: { width: 0, height: 5 },
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.07)",
-      },
-    }),
+    marginBottom: GRID_GAP,
+    minHeight: 190,
+    padding: 16,
+    ...subtleShadow,
   },
 
-  selectedCategoryCard: {
-    borderWidth: 2,
-    borderColor: "#495E57",
+  categoryCardPressed: {
+    opacity: 0.92,
+    transform: [
+      {
+        scale: 0.99,
+      },
+    ],
   },
 
   cardTopRow: {
+    alignItems: "flex-start",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
   },
 
   iconCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
     alignItems: "center",
+    borderRadius: 23,
+    height: 46,
     justifyContent: "center",
+    width: 46,
   },
 
   iconText: {
@@ -387,12 +527,16 @@ const styles = StyleSheet.create({
   },
 
   deleteButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#FFEBEE",
     alignItems: "center",
+    backgroundColor: "#FFEBEE",
+    borderRadius: 14,
+    height: 28,
     justifyContent: "center",
+    width: 28,
+  },
+
+  deleteButtonPressed: {
+    opacity: 0.7,
   },
 
   deleteButtonText: {
@@ -403,40 +547,33 @@ const styles = StyleSheet.create({
   },
 
   cardTitle: {
+    color: "#263238",
     fontSize: 16,
     fontWeight: "800",
-    color: "#263238",
-    marginTop: 12,
     marginBottom: 6,
+    marginTop: 12,
   },
 
   cardDescription: {
-    fontSize: 12,
     color: "#78909C",
+    fontSize: 12,
     lineHeight: 17,
     marginBottom: 10,
   },
 
   latestDocument: {
-    fontSize: 11,
     color: "#607D8B",
-    marginBottom: 10,
+    fontSize: 11,
     fontWeight: "600",
-  },
-
-  cardBottomRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 6,
+    marginBottom: 10,
   },
 
   documentBadge: {
     backgroundColor: "#F5F7F9",
     borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
     maxWidth: "75%",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
 
   documentBadgeText: {
@@ -444,196 +581,89 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
-  categoryDocumentsPanel: {
-    marginHorizontal: 24,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 20,
-    marginBottom: 16,
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 6 },
-      },
-      android: {
-        elevation: 3,
-      },
-      web: {
-        boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.08)",
-      },
-    }),
-  },
-
-  categoryDocumentsTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#263238",
-    marginBottom: 12,
-  },
-
-  emptyDocumentsText: {
-    fontSize: 14,
-    color: "#78909C",
-    lineHeight: 20,
-  },
-
-  savedDocumentRow: {
-    backgroundColor: "#F8FAFB",
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
-  },
-
-  documentInfo: {
-    flex: 1,
-  },
-
-  savedDocumentName: {
-    fontSize: 15,
-    fontWeight: "800",
-    color: "#263238",
-  },
-
-  savedDocumentMeta: {
-    fontSize: 12,
-    color: "#78909C",
-    fontWeight: "700",
-    marginTop: 4,
-  },
-
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 12,
-    fontSize: 14,
-    color: "#263238",
-    borderWidth: 1,
-    borderColor: "#ECEFF1",
-  },
-
-  formButtonRow: {
-    flexDirection: "row",
-    marginTop: 12,
-  },
-
-  cancelSmallButton: {
-    flex: 1,
-    backgroundColor: "#ECEFF1",
-    paddingVertical: 12,
-    borderRadius: 14,
-    alignItems: "center",
-    marginRight: 6,
-  },
-
-  cancelSmallButtonText: {
-    color: "#455A64",
-    fontSize: 13,
-    fontWeight: "800",
-  },
-
-  saveSmallButton: {
-    flex: 1,
-    backgroundColor: "#495E57",
-    paddingVertical: 12,
-    borderRadius: 14,
-    alignItems: "center",
-    marginLeft: 6,
-  },
-
-  saveSmallButtonText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "800",
-  },
-
   savedWithoutCategoryCard: {
-    marginHorizontal: 24,
     backgroundColor: "#FFF8E1",
     borderRadius: 18,
-    padding: 16,
     marginBottom: 12,
+    marginHorizontal: PAGE_PADDING,
+    padding: 16,
   },
 
   savedWithoutCategoryTitle: {
+    color: "#795548",
     fontSize: 15,
     fontWeight: "800",
-    color: "#795548",
   },
 
   savedWithoutCategoryText: {
-    fontSize: 13,
     color: "#795548",
-    marginTop: 4,
+    fontSize: 13,
     lineHeight: 18,
+    marginTop: 4,
   },
 
-  addCategoryCard: {
-    marginHorizontal: 24,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    padding: 18,
-    marginBottom: 12,
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOpacity: 0.07,
-        shadowRadius: 10,
-        shadowOffset: { width: 0, height: 5 },
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.07)",
-      },
-    }),
-  },
-
-  addCategoryTitle: {
-    fontSize: 17,
-    fontWeight: "800",
-    color: "#263238",
-    marginBottom: 12,
-  },
-
-  addButton: {
-    marginHorizontal: 24,
-    marginTop: 10,
-    backgroundColor: "#495E57",
-    paddingVertical: 17,
-    borderRadius: 18,
+  addCategoryButton: {
     alignItems: "center",
-
-    ...Platform.select({
-      ios: {
-        shadowColor: "#495E57",
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-        shadowOffset: { width: 0, height: 6 },
-      },
-      android: {
-        elevation: 4,
-      },
-      web: {
-        boxShadow: "0px 8px 18px rgba(73, 94, 87, 0.25)",
-      },
-    }),
+    backgroundColor: "#495E57",
+    borderRadius: 18,
+    marginHorizontal: PAGE_PADDING,
+    marginTop: 10,
+    paddingVertical: 17,
   },
 
-  addButtonPressed: {
-    transform: [{ scale: 0.99 }],
-    opacity: 0.9,
-  },
-
-  addButtonText: {
+  addCategoryButtonText: {
     color: "#FFFFFF",
     fontSize: 17,
     fontWeight: "800",
   },
 });
+
+export const getCategoryGridLayout = (screenWidth) => {
+  let columns = 1;
+
+  if (screenWidth >= 1400) {
+    columns = 4;
+  } else if (screenWidth >= 1000) {
+    columns = 3;
+  } else if (screenWidth >= 600) {
+    columns = 2;
+  }
+
+  const availableWidth =
+    screenWidth -
+    PAGE_PADDING * 2 -
+    GRID_GAP * (columns - 1);
+
+  return {
+    columns,
+    cardWidth: availableWidth / columns,
+  };
+};
+
+export const getCategoryCardStyle = (
+  cardWidth,
+  index,
+  columns
+) => {
+  return {
+    width: cardWidth,
+    marginRight:
+      (index + 1) % columns === 0
+        ? 0
+        : GRID_GAP,
+  };
+};
+
+export const getCategoryIconStyle = (color) => {
+  return {
+    backgroundColor: color,
+  };
+};
+
+export const getCategoryTextColorStyle = (color) => {
+  return {
+    color,
+  };
+};
 
 export default styles;

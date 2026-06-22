@@ -21,7 +21,16 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sharing"
+      "expo-sharing",
+      "expo-sqlite",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow DocuWallet to use the camera to photograph documents.",
+          "photosPermission": "Allow DocuWallet to access photos for document uploads.",
+          "microphonePermission": false
+        }
+      ]
     ]
   }
 }
