@@ -111,7 +111,7 @@ export default function AuthScreen() {
       >
         <View style={styles.card}>
           <Image
-            source={require("../assets/docuwallet-logo.jpg")}
+            source={require("../assets/docuwallet-logo.png")}
             style={styles.logoImage}
             resizeMode="contain"
           />

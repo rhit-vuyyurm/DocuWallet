@@ -4,11 +4,11 @@
     "slug": "DocuWallet",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/docuwallet-logo.jpg",
+    "icon": "./assets/docuwallet-logo.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/docuwallet-logo.jpg"
+      "icon": "./assets/docuwallet-logo.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +20,7 @@
     },
     "web": {
       "name": "DocuWallet",
-      "favicon": "./assets/docuwallet-logo.jpg",
+      "favicon": "./assets/docuwallet-logo.png",
       "output": "single"
     },
     "plugins": [

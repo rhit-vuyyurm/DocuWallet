@@ -50,7 +50,7 @@ function AppNavigator() {
                 <Image
                   accessibilityLabel="DocuWallet logo"
                   resizeMode="contain"
-                  source={require("./assets/docuwallet-logo.jpg")}
+                  source={require("./assets/docuwallet-logo.png")}
                   style={navigationStyles.headerLogo}
                 />
               </View>
