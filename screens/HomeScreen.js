@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,10 @@ import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 
 import { useDocuments } from "../context/DocumentsContext";
-import styles, {
+import { useTheme } from "../context/ThemeContext";
+import SettingsModal from "../components/SettingsModal";
+import {
+  createHomeScreenStyles,
   getCategoryCardStyle,
   getCategoryGridLayout,
   getCategoryIconStyle,
@@ -70,7 +73,6 @@ const createPendingFile = (fileLike) => {
         : null,
   };
 };
-  
 
 const showMessage = (title, message) => {
   if (
@@ -89,6 +91,8 @@ function PendingFileRow({
   disabled,
   file,
   onNameChange,
+  styles,
+  theme,
 }) {
   return (
     <View style={styles.fileRow}>
@@ -104,7 +108,7 @@ function PendingFileRow({
             onNameChange(file.id, value)
           }
           placeholder="Document name"
-          placeholderTextColor="#90A4AE"
+          placeholderTextColor={theme.mutedText}
           style={styles.fileNameInput}
           value={file.name}
         />
@@ -123,6 +127,8 @@ function CategoryForm({
   onCancel,
   onChangeCategoryName,
   onSave,
+  styles,
+  theme,
   title,
 }) {
   return (
@@ -136,7 +142,7 @@ function CategoryForm({
         editable={!disabled}
         onChangeText={onChangeCategoryName}
         placeholder="Example: Insurance"
-        placeholderTextColor="#90A4AE"
+        placeholderTextColor={theme.mutedText}
         style={styles.categoryFormInput}
         value={categoryName}
       />
@@ -174,6 +180,7 @@ function CategoryCard({
   cardStyle,
   onDelete,
   onOpen,
+  styles,
 }) {
   return (
     <Pressable
@@ -235,6 +242,13 @@ function CategoryCard({
 }
 
 export default function HomeScreen({ navigation }) {
+  const { theme } = useTheme();
+
+  const styles = useMemo(
+    () => createHomeScreenStyles(theme),
+    [theme]
+  );
+
   const {
     categories,
     createCategory,
@@ -260,6 +274,7 @@ export default function HomeScreen({ navigation }) {
   const [destinationCategoryId, setDestinationCategoryId] =
     useState(null);
   const [isDeletingCategory, setIsDeletingCategory] = useState(false);
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
 
   const { width } = useWindowDimensions();
   const { columns, cardWidth } = getCategoryGridLayout(width);
@@ -555,7 +570,7 @@ export default function HomeScreen({ navigation }) {
   if (isLoading) {
     return (
       <View style={styles.statusScreen}>
-        <ActivityIndicator color="#F4CE14" size="large" />
+        <ActivityIndicator color={theme.accent} size="large" />
         <Text style={styles.statusTitle}>
           Connecting to secure cloud storage...
         </Text>
@@ -585,19 +600,36 @@ export default function HomeScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <View style={styles.headerTopRow}>
-            <View>
-              <Text style={styles.appName}>DocuWallet</Text>
-              <Text style={styles.headerSubtitle}>
-                Your campus document organizer
-              </Text>
-            </View>
+          <Pressable
+            accessibilityLabel="Open settings"
+            accessibilityRole="button"
+            onPress={() => setIsSettingsVisible(true)}
+            style={({ pressed }) => [
+              styles.settingsButton,
+              pressed && styles.settingsButtonPressed,
+            ]}
+          >
+            <Text style={styles.settingsButtonIcon}>⚙</Text>
+          </Pressable>
 
-            <Image
-              source={require("../assets/docuwallet-logo.jpg")}
-              style={styles.logoImage}
-              resizeMode="contain"
-            />
+          <View style={styles.headerTopRow}>
+            <View style={styles.brandRow}>
+              <View style={styles.headerTextBox}>
+                <Text numberOfLines={1} style={styles.appName}>
+                  DocuWallet
+                </Text>
+
+                <Text style={styles.headerSubtitle}>
+                  Your campus document organizer
+                </Text>
+              </View>
+
+              <Image
+                source={require("../assets/docuwallet-logo.jpg")}
+                style={styles.logoImage}
+                resizeMode="cover"
+              />
+            </View>
           </View>
 
           <View style={styles.statsRow}>
@@ -677,6 +709,8 @@ export default function HomeScreen({ navigation }) {
               {selectedFiles.map((file) => (
                 <PendingFileRow
                   disabled={isSavingDocuments}
+                  styles={styles}
+                  theme={theme}
                   file={file}
                   key={file.id}
                   onNameChange={updateSelectedFileName}
@@ -717,6 +751,8 @@ export default function HomeScreen({ navigation }) {
               {categoryFormLocation === "upload" ? (
                 <CategoryForm
                   categoryName={newCategoryName}
+                  styles={styles}
+                  theme={theme}
                   disabled={isSavingCategory}
                   onCancel={closeCategoryForm}
                   onChangeCategoryName={setNewCategoryName}
@@ -762,6 +798,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
+
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Document Categories</Text>
           <Text style={styles.sectionHint}>
@@ -773,6 +810,7 @@ export default function HomeScreen({ navigation }) {
           {categories.map((category, index) => (
             <CategoryCard
               cardStyle={getCategoryCardStyle(cardWidth, index, columns)}
+              styles={styles}
               category={category}
               key={category.id}
               onDelete={openCategoryDeleteDialog}
@@ -788,6 +826,8 @@ export default function HomeScreen({ navigation }) {
         {categoryFormLocation === "page" && (
           <CategoryForm
             categoryName={newCategoryName}
+            styles={styles}
+            theme={theme}
             disabled={isSavingCategory}
             onCancel={closeCategoryForm}
             onChangeCategoryName={setNewCategoryName}
@@ -805,6 +845,11 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </Pressable>
       </ScrollView>
+
+      <SettingsModal
+        onClose={() => setIsSettingsVisible(false)}
+        visible={isSettingsVisible}
+      />
 
       <Modal
         animationType="fade"

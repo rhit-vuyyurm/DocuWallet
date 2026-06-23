@@ -1,15 +1,20 @@
-import {
-  COLORS,
-} from "./theme";
-
-export const navigationScreenOptions = {
+export const getNavigationScreenOptions = (theme) => ({
   headerStyle: {
-    backgroundColor: COLORS.header,
+    backgroundColor: theme.header,
+    borderBottomColor: theme.surface,
+    borderBottomWidth: 1,
   },
 
-  headerTintColor: COLORS.surface,
+  headerTintColor: theme.surface,
 
   headerTitleStyle: {
+    color: theme.surface,
     fontWeight: "800",
   },
-};
+
+  headerShadowVisible: true,
+
+  contentStyle: {
+    backgroundColor: theme.background,
+  },
+});

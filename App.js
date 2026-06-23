@@ -1,51 +1,53 @@
-import React from "react";
-import {
-  NavigationContainer,
-} from "@react-navigation/native";
-import {
-  createNativeStackNavigator,
-} from "@react-navigation/native-stack";
-
-import AuthGate from "./components/AuthGate";
-import {
-  AuthProvider,
-} from "./context/AuthContext";
-import {
-  DocumentsProvider,
-} from "./context/DocumentsContext";
+import React, { useMemo } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "./screens/HomeScreen";
 import DocumentsScreen from "./screens/DocumentsScreen";
+
+import { DocumentsProvider } from "./context/DocumentsContext";
 import {
-  navigationScreenOptions,
-} from "./styles/NavigationStyles";
+  ThemeProvider,
+  useTheme,
+} from "./context/ThemeContext";
+
+import { getNavigationScreenOptions } from "./styles/NavigationStyles";
 
 const Stack = createNativeStackNavigator();
 
+function AppNavigator() {
+  const { theme } = useTheme();
+
+  const screenOptions = useMemo(
+    () => getNavigationScreenOptions(theme),
+    [theme]
+  );
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={screenOptions}>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: "DocuWallet" }}
+        />
+
+        <Stack.Screen
+          name="Documents"
+          component={DocumentsScreen}
+          options={{ title: "Documents" }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
   return (
-    <AuthProvider>
-      <AuthGate>
-        <DocumentsProvider>
-          <NavigationContainer>
-            <Stack.Navigator
-              screenOptions={navigationScreenOptions}
-            >
-              <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ title: "DocuWallet" }}
-              />
-
-              <Stack.Screen
-                name="Documents"
-                component={DocumentsScreen}
-                options={{ title: "Documents" }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </DocumentsProvider>
-      </AuthGate>
-    </AuthProvider>
+    <ThemeProvider>
+      <DocumentsProvider>
+        <AppNavigator />
+      </DocumentsProvider>
+    </ThemeProvider>
   );
 }

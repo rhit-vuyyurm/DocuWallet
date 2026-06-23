@@ -1,475 +1,440 @@
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
-const cardShadow =
-  Platform.select({
-    ios: {
-      shadowColor: "#000000",
-      shadowOpacity: 0.08,
-      shadowRadius: 12,
-      shadowOffset: {
-        width: 0,
-        height: 6,
-      },
+import {
+  RADIUS,
+  SHADOWS,
+  SPACING,
+} from "./theme";
+
+export const createDocumentsScreenStyles = (colors) =>
+  StyleSheet.create({
+    screen: {
+      backgroundColor: colors.background,
+      flex: 1,
     },
-    android: {
-      elevation: 3,
+
+    centeredScreen: {
+      alignItems: "center",
+      backgroundColor: colors.background,
+      flex: 1,
+      justifyContent: "center",
+      padding: SPACING.xl,
     },
-    web: {
-      boxShadow:
-        "0px 8px 20px rgba(0, 0, 0, 0.08)",
+
+    errorText: {
+      color: colors.danger,
+      fontSize: 18,
+      fontWeight: "800",
+      textAlign: "center",
     },
-  }) || {};
 
-const subtleShadow =
-  Platform.select({
-    ios: {
-      shadowColor: "#000000",
-      shadowOpacity: 0.06,
-      shadowRadius: 10,
-      shadowOffset: {
-        width: 0,
-        height: 5,
-      },
+    container: {
+      flexGrow: 1,
+      padding: SPACING.xl,
+      paddingBottom: 36,
     },
-    android: {
-      elevation: 2,
+
+    headerCard: {
+      alignItems: "center",
+      backgroundColor: colors.surface,
+      borderRadius: RADIUS.xxl,
+      flexDirection: "row",
+      marginBottom: 18,
+      padding: SPACING.lg,
+      ...SHADOWS.card,
     },
-    web: {
-      boxShadow:
-        "0px 6px 16px rgba(0, 0, 0, 0.06)",
+
+    iconCircle: {
+      alignItems: "center",
+      borderRadius: 27,
+      height: 54,
+      justifyContent: "center",
+      marginRight: 14,
+      width: 54,
     },
-  }) || {};
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: "#F4F6F8",
-  },
-
-  centeredScreen: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F4F6F8",
-    padding: 24,
-  },
-
-  errorText: {
-    color: "#C62828",
-    fontSize: 18,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-
-  container: {
-    flexGrow: 1,
-    padding: 24,
-    paddingBottom: 36,
-  },
-
-  headerCard: {
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    flexDirection: "row",
-    marginBottom: 18,
-    padding: 20,
-    ...cardShadow,
-  },
-
-  iconCircle: {
-    alignItems: "center",
-    borderRadius: 27,
-    height: 54,
-    justifyContent: "center",
-    marginRight: 14,
-    width: 54,
-  },
-
-  iconText: {
-    fontSize: 25,
-  },
-
-  headerTextBox: {
-    flex: 1,
-  },
-
-  title: {
-    color: "#263238",
-    fontSize: 26,
-    fontWeight: "800",
-  },
-
-  subtitle: {
-    color: "#78909C",
-    fontSize: 14,
-    marginTop: 4,
-  },
-
-  emptyCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    padding: 22,
-    ...subtleShadow,
-  },
-
-  emptyTitle: {
-    color: "#263238",
-    fontSize: 19,
-    fontWeight: "800",
-  },
-
-  emptyText: {
-    color: "#78909C",
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 8,
-  },
-
-  documentCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    marginBottom: 14,
-    padding: 18,
-    ...subtleShadow,
-  },
-
-  selectedDocumentCard: {
-    borderColor: "#495E57",
-    borderWidth: 2,
-  },
-
-  documentHeader: {
-    alignItems: "flex-start",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  documentTextColumn: {
-    flex: 1,
-    marginRight: 12,
-  },
-
-  cardHeaderActions: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 8,
-  },
-
-  documentName: {
-    color: "#263238",
-    fontSize: 17,
-    fontWeight: "800",
-  },
-
-  renameButton: {
-    alignSelf: "flex-start",
-    marginTop: 5,
-    paddingVertical: 2,
-  },
-
-  renameButtonText: {
-    color: "#1565C0",
-    fontSize: 13,
-    fontWeight: "800",
-  },
-
-  deleteButton: {
-    alignItems: "center",
-    backgroundColor: "#FFEBEE",
-    borderRadius: 14,
-    height: 28,
-    justifyContent: "center",
-    width: 28,
-  },
-
-  deleteButtonPressed: {
-    opacity: 0.7,
-  },
-
-  deleteButtonText: {
-    color: "#C62828",
-    fontSize: 22,
-    fontWeight: "800",
-    lineHeight: 24,
-  },
-
-  selectButton: {
-    backgroundColor: "#E7ECEE",
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-  },
-
-  selectedButton: {
-    backgroundColor: "#495E57",
-  },
-
-  selectButtonText: {
-    color: "#31464D",
-    fontSize: 12,
-    fontWeight: "800",
-  },
-
-  selectedButtonText: {
-    color: "#FFFFFF",
-  },
-
-  renameLabel: {
-    color: "#455A64",
-    fontSize: 13,
-    fontWeight: "800",
-    marginBottom: 6,
-  },
-
-  renameInput: {
-    borderColor: "#CFD8DC",
-    borderRadius: 12,
-    borderWidth: 1,
-    color: "#263238",
-    fontSize: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
-  },
-
-  renameActions: {
-    flexDirection: "row",
-    marginTop: 10,
-  },
-
-  cancelRenameButton: {
-    alignItems: "center",
-    backgroundColor: "#E7ECEE",
-    borderRadius: 12,
-    flex: 1,
-    marginRight: 6,
-    paddingVertical: 12,
-  },
-
-  cancelRenameText: {
-    color: "#31464D",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  saveRenameButton: {
-    alignItems: "center",
-    backgroundColor: "#495E57",
-    borderRadius: 12,
-    flex: 1,
-    marginLeft: 6,
-    paddingVertical: 12,
-  },
-
-  saveRenameText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  documentMeta: {
-    color: "#78909C",
-    fontSize: 13,
-    marginBottom: 14,
-    marginTop: 8,
-  },
-
-  openButton: {
-    alignItems: "center",
-    backgroundColor: "#495E57",
-    borderRadius: 14,
-    marginBottom: 10,
-    paddingVertical: 14,
-  },
-
-  openButtonText: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "800",
-  },
-
-  actionRow: {
-    flexDirection: "row",
-  },
-
-  secondaryButtonLeft: {
-    alignItems: "center",
-    backgroundColor: "#E7ECEE",
-    borderRadius: 14,
-    flex: 1,
-    marginRight: 4,
-    paddingVertical: 12,
-  },
-
-  secondaryButtonRight: {
-    alignItems: "center",
-    backgroundColor: "#E7ECEE",
-    borderRadius: 14,
-    flex: 1,
-    marginLeft: 4,
-    paddingVertical: 12,
-  },
-
-  secondaryButtonText: {
-    color: "#31464D",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  selectionBar: {
-    alignItems: "center",
-    backgroundColor: "#E8F5E9",
-    borderColor: "#A5D6A7",
-    borderRadius: 18,
-    borderWidth: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 14,
-    padding: 14,
-  },
-
-  selectionText: {
-    color: "#1B5E20",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  selectionButtons: {
-    alignItems: "center",
-    flexDirection: "row",
-  },
-
-  clearSelectionButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-
-  clearSelectionText: {
-    color: "#455A64",
-    fontSize: 13,
-    fontWeight: "800",
-  },
-
-  moveSelectionButton: {
-    backgroundColor: "#495E57",
-    borderRadius: 12,
-    marginLeft: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-
-  moveSelectionText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "800",
-  },
-
-  dialogBackdrop: {
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  dialogCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    maxHeight: "84%",
-    maxWidth: 520,
-    padding: 20,
-    width: "100%",
-  },
-
-  dialogTitle: {
-    color: "#263238",
-    fontSize: 21,
-    fontWeight: "800",
-  },
-
-  dialogText: {
-    color: "#607D8B",
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 7,
-  },
-
-  destinationList: {
-    marginTop: 16,
-  },
-
-  destinationButton: {
-    alignItems: "center",
-    backgroundColor: "#F5F7F9",
-    borderColor: "#CFD8DC",
-    borderRadius: 14,
-    borderWidth: 1,
-    flexDirection: "row",
-    marginBottom: 8,
-    padding: 13,
-  },
-
-  destinationButtonSelected: {
-    backgroundColor: "#E8F5E9",
-    borderColor: "#495E57",
-  },
-
-  destinationIcon: {
-    fontSize: 20,
-    marginRight: 10,
-  },
-
-  destinationText: {
-    color: "#37474F",
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  destinationCheck: {
-    color: "#2E7D32",
-    fontSize: 18,
-    fontWeight: "900",
-  },
-
-  dialogActions: {
-    flexDirection: "row",
-    marginTop: 14,
-  },
-
-  dialogCancelButton: {
-    alignItems: "center",
-    backgroundColor: "#E7ECEE",
-    borderRadius: 12,
-    flex: 1,
-    marginRight: 6,
-    paddingVertical: 13,
-  },
-
-  dialogCancelText: {
-    color: "#31464D",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  dialogMoveButton: {
-    alignItems: "center",
-    backgroundColor: "#495E57",
-    borderRadius: 12,
-    flex: 1.35,
-    marginLeft: 6,
-    paddingVertical: 13,
-  },
-
-  dialogMoveText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-
-  buttonDisabled: {
-    opacity: 0.55,
-  },
-});
-
-export default styles;
+
+    iconText: {
+      fontSize: 25,
+    },
+
+    headerTextBox: {
+      flex: 1,
+    },
+
+    title: {
+      color: colors.text,
+      fontSize: 26,
+      fontWeight: "800",
+    },
+
+    subtitle: {
+      color: colors.mutedText,
+      fontSize: 14,
+      marginTop: SPACING.xxs,
+    },
+
+    emptyCard: {
+      backgroundColor: colors.surface,
+      borderRadius: RADIUS.xl,
+      padding: 22,
+      ...SHADOWS.subtleCard,
+    },
+
+    emptyTitle: {
+      color: colors.text,
+      fontSize: 19,
+      fontWeight: "800",
+    },
+
+    emptyText: {
+      color: colors.mutedText,
+      fontSize: 14,
+      lineHeight: 20,
+      marginTop: SPACING.xs,
+    },
+
+    documentCard: {
+      backgroundColor: colors.surface,
+      borderRadius: RADIUS.xl,
+      marginBottom: 14,
+      padding: 18,
+      ...SHADOWS.subtleCard,
+    },
+
+    selectedDocumentCard: {
+      borderColor: colors.primary,
+      borderWidth: 2,
+    },
+
+    documentHeader: {
+      alignItems: "flex-start",
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+
+    documentTextColumn: {
+      flex: 1,
+      marginRight: SPACING.sm,
+    },
+
+    cardHeaderActions: {
+      alignItems: "center",
+      flexDirection: "row",
+      gap: SPACING.xs,
+    },
+
+    documentName: {
+      color: colors.text,
+      fontSize: 17,
+      fontWeight: "800",
+    },
+
+    renameButton: {
+      alignSelf: "flex-start",
+      marginTop: 5,
+      paddingVertical: 2,
+    },
+
+    renameButtonText: {
+      color: colors.link,
+      fontSize: 13,
+      fontWeight: "800",
+    },
+
+    deleteButton: {
+      alignItems: "center",
+      backgroundColor: colors.dangerBackground,
+      borderRadius: RADIUS.md,
+      height: 28,
+      justifyContent: "center",
+      width: 28,
+    },
+
+    deleteButtonPressed: {
+      opacity: 0.7,
+    },
+
+    deleteButtonText: {
+      color: colors.danger,
+      fontSize: 22,
+      fontWeight: "800",
+      lineHeight: 24,
+    },
+
+    selectButton: {
+      backgroundColor: colors.secondary,
+      borderRadius: RADIUS.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
+    },
+
+    selectedButton: {
+      backgroundColor: colors.primary,
+    },
+
+    selectButtonText: {
+      color: colors.secondaryText,
+      fontSize: 12,
+      fontWeight: "800",
+    },
+
+    selectedButtonText: {
+      color: colors.surface,
+    },
+
+    renameLabel: {
+      color: colors.secondaryText,
+      fontSize: 13,
+      fontWeight: "800",
+      marginBottom: 6,
+    },
+
+    renameInput: {
+      borderColor: colors.border,
+      borderRadius: RADIUS.sm,
+      borderWidth: 1,
+      color: colors.text,
+      fontSize: 16,
+      paddingHorizontal: SPACING.sm,
+      paddingVertical: 11,
+    },
+
+    renameActions: {
+      flexDirection: "row",
+      marginTop: 10,
+    },
+
+    cancelRenameButton: {
+      alignItems: "center",
+      backgroundColor: colors.secondary,
+      borderRadius: RADIUS.sm,
+      flex: 1,
+      marginRight: 6,
+      paddingVertical: SPACING.sm,
+    },
+
+    cancelRenameText: {
+      color: colors.secondaryText,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    saveRenameButton: {
+      alignItems: "center",
+      backgroundColor: colors.primary,
+      borderRadius: RADIUS.sm,
+      flex: 1,
+      marginLeft: 6,
+      paddingVertical: SPACING.sm,
+    },
+
+    saveRenameText: {
+      color: colors.surface,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    documentMeta: {
+      color: colors.mutedText,
+      fontSize: 13,
+      marginBottom: 14,
+      marginTop: SPACING.xs,
+    },
+
+    openButton: {
+      alignItems: "center",
+      backgroundColor: colors.primary,
+      borderRadius: RADIUS.md,
+      marginBottom: 10,
+      paddingVertical: 14,
+    },
+
+    openButtonText: {
+      color: colors.surface,
+      fontSize: 15,
+      fontWeight: "800",
+    },
+
+    actionRow: {
+      flexDirection: "row",
+    },
+
+    secondaryButtonLeft: {
+      alignItems: "center",
+      backgroundColor: colors.secondary,
+      borderRadius: RADIUS.md,
+      flex: 1,
+      marginRight: 4,
+      paddingVertical: SPACING.sm,
+    },
+
+    secondaryButtonRight: {
+      alignItems: "center",
+      backgroundColor: colors.secondary,
+      borderRadius: RADIUS.md,
+      flex: 1,
+      marginLeft: 4,
+      paddingVertical: SPACING.sm,
+    },
+
+    secondaryButtonText: {
+      color: colors.secondaryText,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    selectionBar: {
+      alignItems: "center",
+      backgroundColor: colors.selectedBackground,
+      borderColor: colors.selectedBorder,
+      borderRadius: RADIUS.lg,
+      borderWidth: 1,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 14,
+      padding: 14,
+    },
+
+    selectionText: {
+      color: colors.selectedText,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    selectionButtons: {
+      alignItems: "center",
+      flexDirection: "row",
+    },
+
+    clearSelectionButton: {
+      paddingHorizontal: 10,
+      paddingVertical: SPACING.xs,
+    },
+
+    clearSelectionText: {
+      color: colors.secondaryText,
+      fontSize: 13,
+      fontWeight: "800",
+    },
+
+    moveSelectionButton: {
+      backgroundColor: colors.primary,
+      borderRadius: RADIUS.sm,
+      marginLeft: 6,
+      paddingHorizontal: SPACING.sm,
+      paddingVertical: 10,
+    },
+
+    moveSelectionText: {
+      color: colors.surface,
+      fontSize: 13,
+      fontWeight: "800",
+    },
+
+    dialogBackdrop: {
+      alignItems: "center",
+      backgroundColor: colors.surfaceOverlay,
+      flex: 1,
+      justifyContent: "center",
+      padding: SPACING.lg,
+    },
+
+    dialogCard: {
+      backgroundColor: colors.surface,
+      borderRadius: RADIUS.xxl,
+      maxHeight: "84%",
+      maxWidth: 520,
+      padding: SPACING.lg,
+      width: "100%",
+    },
+
+    dialogTitle: {
+      color: colors.text,
+      fontSize: 21,
+      fontWeight: "800",
+    },
+
+    dialogText: {
+      color: colors.softText,
+      fontSize: 14,
+      lineHeight: 20,
+      marginTop: 7,
+    },
+
+    destinationList: {
+      marginTop: SPACING.md,
+    },
+
+    destinationButton: {
+      alignItems: "center",
+      backgroundColor: colors.panelSubtle,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      borderWidth: 1,
+      flexDirection: "row",
+      marginBottom: SPACING.xs,
+      padding: 13,
+    },
+
+    destinationButtonSelected: {
+      backgroundColor: colors.selectedBackground,
+      borderColor: colors.primary,
+    },
+
+    destinationIcon: {
+      fontSize: 20,
+      marginRight: 10,
+    },
+
+    destinationText: {
+      color: colors.text,
+      flex: 1,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    destinationCheck: {
+      color: colors.primary,
+      fontSize: 18,
+      fontWeight: "900",
+    },
+
+    dialogActions: {
+      flexDirection: "row",
+      marginTop: 14,
+    },
+
+    dialogCancelButton: {
+      alignItems: "center",
+      backgroundColor: colors.secondary,
+      borderRadius: RADIUS.sm,
+      flex: 1,
+      marginRight: 6,
+      paddingVertical: 13,
+    },
+
+    dialogCancelText: {
+      color: colors.secondaryText,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    dialogMoveButton: {
+      alignItems: "center",
+      backgroundColor: colors.primary,
+      borderRadius: RADIUS.sm,
+      flex: 1.35,
+      marginLeft: 6,
+      paddingVertical: 13,
+    },
+
+    dialogMoveText: {
+      color: colors.surface,
+      fontSize: 14,
+      fontWeight: "800",
+    },
+
+    buttonDisabled: {
+      opacity: 0.55,
+    },
+  });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Linking,
@@ -15,7 +15,8 @@ import {
 import * as Clipboard from "expo-clipboard";
 
 import { useDocuments } from "../context/DocumentsContext";
-import styles from "../styles/DocumentsScreenStyles";
+import { useTheme } from "../context/ThemeContext";
+import { createDocumentsScreenStyles } from "../styles/DocumentsScreenStyles";
 
 const formatFileSize = (size) => {
   const fileSize = Number(size || 0);
@@ -58,6 +59,8 @@ function DocumentCard({
   onRename,
   onShare,
   onToggleSelection,
+  styles,
+  theme,
 }) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftName, setDraftName] = useState(document.name);
@@ -99,7 +102,7 @@ function DocumentCard({
                 editable={!isWorking}
                 onChangeText={setDraftName}
                 placeholder="Document name"
-                placeholderTextColor="#90A4AE"
+                placeholderTextColor={theme.mutedText}
                 style={styles.renameInput}
                 value={draftName}
               />
@@ -238,6 +241,12 @@ function DocumentCard({
 
 export default function DocumentsScreen({ route }) {
   const { categoryId } = route.params;
+  const { theme } = useTheme();
+
+  const styles = useMemo(
+    () => createDocumentsScreenStyles(theme),
+    [theme]
+  );
 
   const {
     categories,
@@ -555,6 +564,8 @@ export default function DocumentsScreen({ route }) {
           category.documents.map((document) => (
             <DocumentCard
               document={document}
+              styles={styles}
+              theme={theme}
               isSelected={selectedDocumentIds.includes(document.id)}
               isWorking={
                 activeDocumentId === document.id || isMovingDocuments
