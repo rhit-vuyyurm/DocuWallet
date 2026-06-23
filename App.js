@@ -1,6 +1,9 @@
 import React, { useMemo } from "react";
+import { Image, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 
 import HomeScreen from "./screens/HomeScreen";
 import DocumentsScreen from "./screens/DocumentsScreen";
@@ -11,7 +14,10 @@ import {
   useTheme,
 } from "./context/ThemeContext";
 
-import { getNavigationScreenOptions } from "./styles/NavigationStyles";
+import {
+  createNavigationStyles,
+  getNavigationScreenOptions,
+} from "./styles/NavigationStyles";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,13 +29,33 @@ function AppNavigator() {
     [theme]
   );
 
+  const navigationStyles = useMemo(
+    () => createNavigationStyles(theme),
+    [theme]
+  );
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "DocuWallet" }}
+          options={{
+            headerTitle: () => (
+              <View style={navigationStyles.headerBrand}>
+                <Text style={navigationStyles.headerBrandText}>
+                  DocuWallet
+                </Text>
+
+                <Image
+                  accessibilityLabel="DocuWallet logo"
+                  resizeMode="contain"
+                  source={require("./assets/docuwallet-logo.jpg")}
+                  style={navigationStyles.headerLogo}
+                />
+              </View>
+            ),
+          }}
         />
 
         <Stack.Screen

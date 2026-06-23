@@ -613,22 +613,12 @@ export default function HomeScreen({ navigation }) {
           </Pressable>
 
           <View style={styles.headerTopRow}>
-            <View style={styles.brandRow}>
-              <View style={styles.headerTextBox}>
-                <Text numberOfLines={1} style={styles.appName}>
-                  DocuWallet
-                </Text>
+            <View style={styles.headerTextBox}>
+              <Text style={styles.appName}>DocuWallet</Text>
 
-                <Text style={styles.headerSubtitle}>
-                  Your campus document organizer
-                </Text>
-              </View>
-
-              <Image
-                source={require("../assets/docuwallet-logo.jpg")}
-                style={styles.logoImage}
-                resizeMode="cover"
-              />
+              <Text style={styles.headerSubtitle}>
+                Your campus document organizer
+              </Text>
             </View>
           </View>
 

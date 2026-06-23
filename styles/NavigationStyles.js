@@ -1,3 +1,5 @@
+import { StyleSheet } from "react-native";
+
 export const getNavigationScreenOptions = (theme) => ({
   headerStyle: {
     backgroundColor: theme.header,
@@ -7,14 +9,32 @@ export const getNavigationScreenOptions = (theme) => ({
 
   headerTintColor: theme.surface,
 
-  headerTitleStyle: {
-    color: theme.surface,
-    fontWeight: "800",
-  },
-
   headerShadowVisible: true,
+
+  headerTitleAlign: "left",
 
   contentStyle: {
     backgroundColor: theme.background,
   },
 });
+
+export const createNavigationStyles = (theme) =>
+  StyleSheet.create({
+    headerBrand: {
+      alignItems: "center",
+      flexDirection: "row",
+    },
+
+    headerBrandText: {
+      color: theme.surface,
+      fontSize: 22,
+      fontWeight: "800",
+    },
+
+    headerLogo: {
+      borderRadius: 20,
+      height: 40,
+      marginLeft: 10,
+      width: 40,
+    },
+  });
