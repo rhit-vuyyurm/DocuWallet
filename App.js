@@ -38,7 +38,7 @@ function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name="Home"
+          name="DocuWallet"
           component={HomeScreen}
           options={{
             headerTitle: () => (

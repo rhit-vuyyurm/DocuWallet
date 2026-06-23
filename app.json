@@ -7,7 +7,8 @@
     "icon": "./assets/docuwallet-logo.jpg",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/docuwallet-logo.jpg"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,6 +19,7 @@
       }
     },
     "web": {
+      "name": "DocuWallet",
       "favicon": "./assets/docuwallet-logo.jpg",
       "output": "single"
     },
