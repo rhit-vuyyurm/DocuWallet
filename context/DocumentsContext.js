@@ -107,9 +107,10 @@ const requireCloudSession = async () => {
   }
 
   if (!session?.user || session.user.is_anonymous) {
-    throw new Error(
-      "Please sign in with your DocuWallet account."
-    );
+    // throw new Error(
+    //   "Please sign in with your DocuWallet account."
+    // );
+    return null;
   }
 
   return session;
@@ -157,7 +158,13 @@ export function DocumentsProvider({ children }) {
     setLoadError("");
 
     try {
-      await requireCloudSession();
+      const session = await requireCloudSession();
+
+      if (!session) {
+        setCategories([]);
+        setIsLoading(false);
+        return;
+      }
 
       let {
         data: categoryRows,
@@ -286,6 +293,9 @@ export function DocumentsProvider({ children }) {
     }
 
     const session = await requireCloudSession();
+    if (!session) {
+      throw new Error("Please sign in before uploading documents.");
+    }
     let savedCount = 0;
     const failedFiles = [];
 

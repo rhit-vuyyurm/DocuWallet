@@ -20,8 +20,7 @@
     },
     "web": {
       "name": "DocuWallet",
-      "favicon": "./assets/docuwallet-logo.png",
-      "output": "single"
+      "favicon": "./assets/docuwallet-logo.png"
     },
     "plugins": [
       "expo-sharing",

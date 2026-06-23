@@ -1,18 +1,15 @@
 import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import {
-  createNativeStackNavigator,
-} from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "./screens/HomeScreen";
 import DocumentsScreen from "./screens/DocumentsScreen";
+import AuthScreen from "./screens/AuthScreen";
 
 import { DocumentsProvider } from "./context/DocumentsContext";
-import {
-  ThemeProvider,
-  useTheme,
-} from "./context/ThemeContext";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import {
   createNavigationStyles,
@@ -43,10 +40,7 @@ function AppNavigator() {
           options={{
             headerTitle: () => (
               <View style={navigationStyles.headerBrand}>
-                <Text style={navigationStyles.headerBrandText}>
-                  DocuWallet
-                </Text>
-
+                <Text style={navigationStyles.headerBrandText}>DocuWallet</Text>
                 <Image
                   accessibilityLabel="DocuWallet logo"
                   resizeMode="contain"
@@ -68,12 +62,30 @@ function AppNavigator() {
   );
 }
 
+function RootContent() {
+  const { session, isLoading } = useAuth();
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (!session) {
+    return <AuthScreen />;
+  }
+
+  return (
+    <DocumentsProvider>
+      <AppNavigator />
+    </DocumentsProvider>
+  );
+}
+
 export default function App() {
   return (
-    <ThemeProvider>
-      <DocumentsProvider>
-        <AppNavigator />
-      </DocumentsProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <RootContent />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
