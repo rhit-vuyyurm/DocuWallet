@@ -581,27 +581,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
-  savedWithoutCategoryCard: {
-    backgroundColor: "#FFF8E1",
-    borderRadius: 18,
-    marginBottom: 12,
-    marginHorizontal: PAGE_PADDING,
-    padding: 16,
-  },
-
-  savedWithoutCategoryTitle: {
-    color: "#795548",
-    fontSize: 15,
-    fontWeight: "800",
-  },
-
-  savedWithoutCategoryText: {
-    color: "#795548",
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 4,
-  },
-
   addCategoryButton: {
     alignItems: "center",
     backgroundColor: "#495E57",
@@ -614,6 +593,119 @@ const styles = StyleSheet.create({
   addCategoryButtonText: {
     color: "#FFFFFF",
     fontSize: 17,
+    fontWeight: "800",
+  },
+
+  backdrop: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    maxHeight: "84%",
+    maxWidth: 520,
+    padding: 20,
+    width: "100%",
+  },
+
+  title: {
+    color: "#263238",
+    fontSize: 21,
+    fontWeight: "800",
+  },
+
+  text: {
+    color: "#607D8B",
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 7,
+  },
+
+  destinationList: {
+    marginTop: 16,
+  },
+
+  destinationButton: {
+    alignItems: "center",
+    backgroundColor: "#F5F7F9",
+    borderColor: "#CFD8DC",
+    borderRadius: 14,
+    borderWidth: 1,
+    flexDirection: "row",
+    marginBottom: 8,
+    padding: 13,
+  },
+
+  destinationButtonSelected: {
+    backgroundColor: "#E8F5E9",
+    borderColor: "#495E57",
+  },
+
+  destinationIcon: {
+    fontSize: 20,
+    marginRight: 10,
+  },
+
+  destinationText: {
+    color: "#37474F",
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  destinationCheck: {
+    color: "#2E7D32",
+    fontSize: 18,
+    fontWeight: "900",
+  },
+
+  actionColumn: {
+    marginTop: 14,
+  },
+
+  primaryAction: {
+    alignItems: "center",
+    backgroundColor: "#495E57",
+    borderRadius: 12,
+    marginBottom: 8,
+    paddingVertical: 13,
+  },
+
+  primaryActionText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  destructiveAction: {
+    alignItems: "center",
+    backgroundColor: "#FFEBEE",
+    borderRadius: 12,
+    marginBottom: 8,
+    paddingVertical: 13,
+  },
+
+  destructiveActionText: {
+    color: "#C62828",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  cancelAction: {
+    alignItems: "center",
+    backgroundColor: "#E7ECEE",
+    borderRadius: 12,
+    paddingVertical: 13,
+  },
+
+  cancelActionText: {
+    color: "#31464D",
+    fontSize: 14,
     fontWeight: "800",
   },
 });
@@ -665,5 +757,6 @@ export const getCategoryTextColorStyle = (color) => {
     color,
   };
 };
+
 
 export default styles;

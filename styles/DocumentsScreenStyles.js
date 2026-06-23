@@ -134,6 +134,11 @@ const styles = StyleSheet.create({
     ...subtleShadow,
   },
 
+  selectedDocumentCard: {
+    borderColor: "#495E57",
+    borderWidth: 2,
+  },
+
   documentHeader: {
     alignItems: "flex-start",
     flexDirection: "row",
@@ -143,6 +148,12 @@ const styles = StyleSheet.create({
   documentTextColumn: {
     flex: 1,
     marginRight: 12,
+  },
+
+  cardHeaderActions: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8,
   },
 
   documentName: {
@@ -181,6 +192,27 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "800",
     lineHeight: 24,
+  },
+
+  selectButton: {
+    backgroundColor: "#E7ECEE",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+
+  selectedButton: {
+    backgroundColor: "#495E57",
+  },
+
+  selectButtonText: {
+    color: "#31464D",
+    fontSize: 12,
+    fontWeight: "800",
+  },
+
+  selectedButtonText: {
+    color: "#FFFFFF",
   },
 
   renameLabel: {
@@ -284,28 +316,159 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
 
-  buttonDisabled: {
-    opacity: 0.55,
-  },
-
-  noteCard: {
-    backgroundColor: "#FFF8E1",
+  selectionBar: {
+    alignItems: "center",
+    backgroundColor: "#E8F5E9",
+    borderColor: "#A5D6A7",
     borderRadius: 18,
-    marginTop: 6,
-    padding: 16,
+    borderWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 14,
+    padding: 14,
   },
 
-  noteTitle: {
-    color: "#795548",
-    fontSize: 15,
+  selectionText: {
+    color: "#1B5E20",
+    fontSize: 14,
     fontWeight: "800",
   },
 
-  noteText: {
-    color: "#795548",
+  selectionButtons: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+
+  clearSelectionButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+
+  clearSelectionText: {
+    color: "#455A64",
     fontSize: 13,
-    lineHeight: 18,
-    marginTop: 4,
+    fontWeight: "800",
+  },
+
+  moveSelectionButton: {
+    backgroundColor: "#495E57",
+    borderRadius: 12,
+    marginLeft: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+
+  moveSelectionText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "800",
+  },
+
+  dialogBackdrop: {
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+
+  dialogCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    maxHeight: "84%",
+    maxWidth: 520,
+    padding: 20,
+    width: "100%",
+  },
+
+  dialogTitle: {
+    color: "#263238",
+    fontSize: 21,
+    fontWeight: "800",
+  },
+
+  dialogText: {
+    color: "#607D8B",
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 7,
+  },
+
+  destinationList: {
+    marginTop: 16,
+  },
+
+  destinationButton: {
+    alignItems: "center",
+    backgroundColor: "#F5F7F9",
+    borderColor: "#CFD8DC",
+    borderRadius: 14,
+    borderWidth: 1,
+    flexDirection: "row",
+    marginBottom: 8,
+    padding: 13,
+  },
+
+  destinationButtonSelected: {
+    backgroundColor: "#E8F5E9",
+    borderColor: "#495E57",
+  },
+
+  destinationIcon: {
+    fontSize: 20,
+    marginRight: 10,
+  },
+
+  destinationText: {
+    color: "#37474F",
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  destinationCheck: {
+    color: "#2E7D32",
+    fontSize: 18,
+    fontWeight: "900",
+  },
+
+  dialogActions: {
+    flexDirection: "row",
+    marginTop: 14,
+  },
+
+  dialogCancelButton: {
+    alignItems: "center",
+    backgroundColor: "#E7ECEE",
+    borderRadius: 12,
+    flex: 1,
+    marginRight: 6,
+    paddingVertical: 13,
+  },
+
+  dialogCancelText: {
+    color: "#31464D",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  dialogMoveButton: {
+    alignItems: "center",
+    backgroundColor: "#495E57",
+    borderRadius: 12,
+    flex: 1.35,
+    marginLeft: 6,
+    paddingVertical: 13,
+  },
+
+  dialogMoveText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+
+  buttonDisabled: {
+    opacity: 0.55,
   },
 });
 

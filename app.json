@@ -18,7 +18,8 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "single"
     },
     "plugins": [
       "expo-sharing",
@@ -31,6 +32,11 @@
           "microphonePermission": false
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5b09b723-c6d8-4211-b003-d5b9440337b3"
+      }
+    }
   }
 }

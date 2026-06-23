@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Alert,
   Linking,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -34,14 +35,29 @@ const formatFileSize = (size) => {
   return `${(fileSize / (1024 * 1024)).toFixed(1)} MB`;
 };
 
+const showMessage = (title, message) => {
+  if (
+    Platform.OS === "web" &&
+    typeof window !== "undefined" &&
+    typeof window.alert === "function"
+  ) {
+    window.alert(`${title}\n\n${message}`);
+    return;
+  }
+
+  Alert.alert(title, message);
+};
+
 function DocumentCard({
   document,
+  isSelected,
   isWorking,
   onCopyLink,
   onDelete,
   onOpen,
   onRename,
   onShare,
+  onToggleSelection,
 }) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftName, setDraftName] = useState(document.name);
@@ -64,7 +80,12 @@ function DocumentCard({
   };
 
   return (
-    <View style={styles.documentCard}>
+    <View
+      style={[
+        styles.documentCard,
+        isSelected && styles.selectedDocumentCard,
+      ]}
+    >
       <View style={styles.documentHeader}>
         <View style={styles.documentTextColumn}>
           {isRenaming ? (
@@ -130,25 +151,45 @@ function DocumentCard({
           )}
         </View>
 
-        <Pressable
-          accessibilityLabel={`Delete ${document.name}`}
-          disabled={isWorking}
-          onPress={() => onDelete(document)}
-          style={({ pressed }) => [
-            styles.deleteButton,
-            pressed && styles.deleteButtonPressed,
-            isWorking && styles.buttonDisabled,
-          ]}
-        >
-          <Text style={styles.deleteButtonText}>
-            ×
-          </Text>
-        </Pressable>
+        <View style={styles.cardHeaderActions}>
+          <Pressable
+            disabled={isWorking}
+            onPress={() => onToggleSelection(document.id)}
+            style={[
+              styles.selectButton,
+              isSelected && styles.selectedButton,
+              isWorking && styles.buttonDisabled,
+            ]}
+          >
+            <Text
+              style={[
+                styles.selectButtonText,
+                isSelected && styles.selectedButtonText,
+              ]}
+            >
+              {isSelected ? "Selected" : "Select"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            accessibilityLabel={`Delete ${document.name}`}
+            disabled={isWorking}
+            onPress={() => onDelete(document)}
+            style={({ pressed }) => [
+              styles.deleteButton,
+              pressed && styles.deleteButtonPressed,
+              isWorking && styles.buttonDisabled,
+            ]}
+          >
+            <Text style={styles.deleteButtonText}>
+              ×
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       <Text style={styles.documentMeta}>
-        {formatFileSize(document.size)} • Saved{" "}
-        {document.savedAt}
+        {formatFileSize(document.size)} • Saved {document.savedAt}
       </Text>
 
       <Pressable
@@ -199,17 +240,24 @@ export default function DocumentsScreen({ route }) {
   const { categoryId } = route.params;
 
   const {
+    categories,
     createSignedDocumentUrl,
     deleteDocument,
     getCategoryById,
+    moveDocuments,
     renameDocument,
-    savedWithoutCategory,
   } = useDocuments();
 
-  const [activeDocumentId, setActiveDocumentId] =
-    useState(null);
+  const [activeDocumentId, setActiveDocumentId] = useState(null);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
+  const [isMoveDialogVisible, setIsMoveDialogVisible] = useState(false);
+  const [destinationCategoryId, setDestinationCategoryId] = useState(null);
+  const [isMovingDocuments, setIsMovingDocuments] = useState(false);
 
   const category = getCategoryById(categoryId);
+  const destinationCategories = categories.filter(
+    (candidate) => candidate.id !== categoryId
+  );
 
   const runDocumentAction = async (
     document,
@@ -224,15 +272,64 @@ export default function DocumentsScreen({ route }) {
       return true;
     } catch (error) {
       console.error(`${errorTitle}:`, error);
-
-      Alert.alert(
-        errorTitle,
-        error.message || fallbackMessage
-      );
-
+      showMessage(errorTitle, error.message || fallbackMessage);
       return false;
     } finally {
       setActiveDocumentId(null);
+    }
+  };
+
+  const toggleDocumentSelection = (documentId) => {
+    setSelectedDocumentIds((currentIds) => {
+      if (currentIds.includes(documentId)) {
+        return currentIds.filter((id) => id !== documentId);
+      }
+
+      return [...currentIds, documentId];
+    });
+  };
+
+  const closeMoveDialog = () => {
+    if (isMovingDocuments) {
+      return;
+    }
+
+    setDestinationCategoryId(null);
+    setIsMoveDialogVisible(false);
+  };
+
+  const moveSelectedDocuments = async () => {
+    if (selectedDocumentIds.length === 0) {
+      return;
+    }
+
+    if (!destinationCategoryId) {
+      showMessage(
+        "Choose a Category",
+        "Select the category that should receive these documents."
+      );
+      return;
+    }
+
+    setIsMovingDocuments(true);
+
+    try {
+      await moveDocuments(
+        selectedDocumentIds,
+        destinationCategoryId
+      );
+
+      setSelectedDocumentIds([]);
+      setDestinationCategoryId(null);
+      setIsMoveDialogVisible(false);
+    } catch (error) {
+      console.error("Move documents error:", error);
+      showMessage(
+        "Move Failed",
+        error.message || "The selected documents could not be moved."
+      );
+    } finally {
+      setIsMovingDocuments(false);
     }
   };
 
@@ -246,8 +343,7 @@ export default function DocumentsScreen({ route }) {
     const wasOpened = await runDocumentAction(
       document,
       async () => {
-        const signedUrl =
-          await createSignedDocumentUrl(document);
+        const signedUrl = await createSignedDocumentUrl(document);
 
         if (Platform.OS === "web") {
           if (browserTab) {
@@ -274,8 +370,7 @@ export default function DocumentsScreen({ route }) {
     await runDocumentAction(
       document,
       async () => {
-        const signedUrl =
-          await createSignedDocumentUrl(document);
+        const signedUrl = await createSignedDocumentUrl(document);
 
         if (Platform.OS === "web") {
           if (
@@ -292,12 +387,10 @@ export default function DocumentsScreen({ route }) {
           }
 
           await Clipboard.setStringAsync(signedUrl);
-
-          Alert.alert(
+          showMessage(
             "Link Copied",
             "Browser sharing is unavailable, so the secure link was copied."
           );
-
           return;
         }
 
@@ -315,12 +408,10 @@ export default function DocumentsScreen({ route }) {
     await runDocumentAction(
       document,
       async () => {
-        const signedUrl =
-          await createSignedDocumentUrl(document);
-
+        const signedUrl = await createSignedDocumentUrl(document);
         await Clipboard.setStringAsync(signedUrl);
 
-        Alert.alert(
+        showMessage(
           "Copied",
           "Secure document link copied. It expires after one hour."
         );
@@ -330,10 +421,7 @@ export default function DocumentsScreen({ route }) {
     );
   };
 
-  const renameSavedDocument = async (
-    document,
-    newName
-  ) => {
+  const renameSavedDocument = async (document, newName) => {
     return runDocumentAction(
       document,
       async () => {
@@ -344,30 +432,47 @@ export default function DocumentsScreen({ route }) {
     );
   };
 
-  const askToDeleteDocument = (document) => {
-    Alert.alert(
-      "Delete Document?",
-      `"${document.name}" will be permanently deleted from this category and cloud storage.`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () =>
-            runDocumentAction(
-              document,
-              async () => {
-                await deleteDocument(document);
-              },
-              "Delete Failed",
-              "The document could not be deleted."
-            ),
-        },
-      ]
+  const deleteDocumentNow = async (document) => {
+    const wasDeleted = await runDocumentAction(
+      document,
+      async () => {
+        await deleteDocument(document);
+      },
+      "Delete Failed",
+      "The document could not be deleted."
     );
+
+    if (wasDeleted) {
+      setSelectedDocumentIds((currentIds) =>
+        currentIds.filter((id) => id !== document.id)
+      );
+    }
+  };
+
+  const askToDeleteDocument = (document) => {
+    const message =
+      `Permanently delete "${document.name}" from cloud storage? ` +
+      "This cannot be undone.";
+
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      if (window.confirm(message)) {
+        deleteDocumentNow(document);
+      }
+
+      return;
+    }
+
+    Alert.alert("Delete Document?", message, [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => deleteDocumentNow(document),
+      },
+    ]);
   };
 
   if (!category) {
@@ -392,43 +497,67 @@ export default function DocumentsScreen({ route }) {
               },
             ]}
           >
-            <Text style={styles.iconText}>
-              {category.icon}
-            </Text>
+            <Text style={styles.iconText}>{category.icon}</Text>
           </View>
 
           <View style={styles.headerTextBox}>
-            <Text style={styles.title}>
-              {category.title}
-            </Text>
+            <Text style={styles.title}>{category.title}</Text>
 
             <Text style={styles.subtitle}>
               {category.documents.length} document
-              {category.documents.length === 1
-                ? ""
-                : "s"}{" "}
-              saved
+              {category.documents.length === 1 ? "" : "s"} saved
             </Text>
           </View>
         </View>
 
-        {category.documents.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>
-              No documents yet
+        {selectedDocumentIds.length > 0 && (
+          <View style={styles.selectionBar}>
+            <Text style={styles.selectionText}>
+              {selectedDocumentIds.length} selected
             </Text>
 
+            <View style={styles.selectionButtons}>
+              <Pressable
+                disabled={isMovingDocuments}
+                onPress={() => setSelectedDocumentIds([])}
+                style={styles.clearSelectionButton}
+              >
+                <Text style={styles.clearSelectionText}>
+                  Clear
+                </Text>
+              </Pressable>
+
+              <Pressable
+                disabled={isMovingDocuments}
+                onPress={() => setIsMoveDialogVisible(true)}
+                style={[
+                  styles.moveSelectionButton,
+                  isMovingDocuments && styles.buttonDisabled,
+                ]}
+              >
+                <Text style={styles.moveSelectionText}>
+                  Move selected
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {category.documents.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>No documents yet</Text>
+
             <Text style={styles.emptyText}>
-              Go back to Home, upload documents, and
-              assign them to this category.
+              Go back to Home, upload documents, and assign them to this category.
             </Text>
           </View>
         ) : (
           category.documents.map((document) => (
             <DocumentCard
               document={document}
+              isSelected={selectedDocumentIds.includes(document.id)}
               isWorking={
-                activeDocumentId === document.id
+                activeDocumentId === document.id || isMovingDocuments
               }
               key={document.id}
               onCopyLink={copyDocumentLink}
@@ -436,23 +565,97 @@ export default function DocumentsScreen({ route }) {
               onOpen={openDocument}
               onRename={renameSavedDocument}
               onShare={shareDocument}
+              onToggleSelection={toggleDocumentSelection}
             />
           ))
         )}
-
-        {savedWithoutCategory.length > 0 && (
-          <View style={styles.noteCard}>
-            <Text style={styles.noteTitle}>
-              Saved Without Category
-            </Text>
-
-            <Text style={styles.noteText}>
-              Some documents were kept after deleting a
-              category.
-            </Text>
-          </View>
-        )}
       </ScrollView>
+
+      <Modal
+        animationType="fade"
+        onRequestClose={closeMoveDialog}
+        transparent
+        visible={isMoveDialogVisible}
+      >
+        <View style={styles.dialogBackdrop}>
+          <View style={styles.dialogCard}>
+            <Text style={styles.dialogTitle}>
+              Move Selected Documents
+            </Text>
+
+            <Text style={styles.dialogText}>
+              Choose the category that should receive {selectedDocumentIds.length} selected document
+              {selectedDocumentIds.length === 1 ? "" : "s"}.
+            </Text>
+
+            {destinationCategories.length === 0 ? (
+              <Text style={styles.dialogText}>
+                Create another category before moving documents.
+              </Text>
+            ) : (
+              <ScrollView style={styles.destinationList}>
+                {destinationCategories.map((destination) => {
+                  const isSelected =
+                    destination.id === destinationCategoryId;
+
+                  return (
+                    <Pressable
+                      key={destination.id}
+                      onPress={() =>
+                        setDestinationCategoryId(destination.id)
+                      }
+                      style={[
+                        styles.destinationButton,
+                        isSelected && styles.destinationButtonSelected,
+                      ]}
+                    >
+                      <Text style={styles.destinationIcon}>
+                        {destination.icon}
+                      </Text>
+
+                      <Text style={styles.destinationText}>
+                        {destination.title}
+                      </Text>
+
+                      {isSelected && (
+                        <Text style={styles.destinationCheck}>✓</Text>
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            )}
+
+            <View style={styles.dialogActions}>
+              <Pressable
+                disabled={isMovingDocuments}
+                onPress={closeMoveDialog}
+                style={styles.dialogCancelButton}
+              >
+                <Text style={styles.dialogCancelText}>Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                disabled={
+                  isMovingDocuments ||
+                  !destinationCategoryId ||
+                  destinationCategories.length === 0
+                }
+                onPress={moveSelectedDocuments}
+                style={[
+                  styles.dialogMoveButton,
+                  (isMovingDocuments || !destinationCategoryId) &&
+                    styles.buttonDisabled,
+                ]}
+              >
+                <Text style={styles.dialogMoveText}>
+                  {isMovingDocuments ? "Moving..." : "Move Documents"}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
