@@ -33,13 +33,21 @@ export const createSettingsModalStyles = (colors) =>
     titleRow: {
       alignItems: "flex-start",
       flexDirection: "row",
-      justifyContent: "space-between",
+      overflow: "visible",
+      width: "100%",
     },
 
     title: {
       color: colors.text,
       fontSize: 24,
       fontWeight: "800",
+    },
+
+    titleTextBox: {
+      flex: 1,
+      flexShrink: 1,
+      minWidth: 0,
+      marginRight: SPACING.md,
     },
 
     subtitle: {
@@ -52,17 +60,17 @@ export const createSettingsModalStyles = (colors) =>
 
     settingsIconCircle: {
       alignItems: "center",
+      alignSelf: "flex-start",
       backgroundColor: colors.secondary,
-      borderRadius: 22,
-      height: 44,
+      borderRadius: 28,
+      flexShrink: 0,
+      height: 56,
       justifyContent: "center",
-      width: 44,
+      width: 56,
     },
 
     settingsIcon: {
-      color: colors.secondaryText,
-      fontSize: 22,
-      fontWeight: "700",
+      color: colors.primary,
     },
 
     sectionLabel: {

@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "../context/ThemeContext";
 import { THEME_OPTIONS } from "../styles/theme";
 import {
@@ -40,15 +41,20 @@ export default function SettingsModal({ onClose, visible }) {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.titleRow}>
-              <View>
+              <View style={styles.titleTextBox}>
                 <Text style={styles.title}>Settings</Text>
+
                 <Text style={styles.subtitle}>
                   Choose an appearance. Changes apply immediately.
                 </Text>
               </View>
 
               <View style={styles.settingsIconCircle}>
-                <Text style={styles.settingsIcon}>⚙</Text>
+                <Ionicons
+                  name="settings-outline"
+                  size={26}
+                  style={styles.settingsIcon}
+                />
               </View>
             </View>
 
